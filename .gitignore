@@ -1,5 +1,5 @@
 #ecludes the dependences.
-*/vendor
+vendor/
 
 # Binaries for programs and plugins
 *.exe

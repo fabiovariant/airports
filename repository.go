@@ -12,10 +12,3 @@ func GetMongoSession() (session *mgo.Session) {
 	}
 	return
 }
-
-//Return a copy of the mongodb session and a collection conn.
-func getSessionCopyAndCollectionConn(s *mgo.Session) (session *mgo.Session, c *mgo.Collection) {
-	session = s.Copy()
-	c = session.DB("airports").C("airposts_list")
-	return session, c
-}
