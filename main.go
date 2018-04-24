@@ -11,8 +11,11 @@ import (
 func main() {
 
 	router := mux.NewRouter()
+
 	router.HandleFunc("/register/countries", GetCountries).Methods("GET")
 	router.HandleFunc("/register/countries/states/{cd_country}", GetStatesByCountry).Methods("GET")
+	router.HandleFunc("/register/countries/states/{cd_country}/{cd_state}", GetCitiesByState).Methods("GET")
+
 	router.HandleFunc("/airport/name/{sg_airport}", GetAirportByInitials).Methods("GET")
 
 	c := cors.New(cors.Options{
