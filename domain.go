@@ -30,6 +30,7 @@ type State struct {
 	ID      bson.ObjectId `json:"id" bson:"_id,omitempty"`
 	CdState string        `json:"value" bson:"cd_state"`
 	NmState string        `json:"text" bson:"nm_state"`
+	Cities  []City        `json:"cities" bson:"cities"`
 }
 
 // City is the strct of a City Collection.
