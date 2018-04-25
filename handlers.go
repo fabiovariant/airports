@@ -2,7 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	"gopkg.in/mgo.v2"
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
@@ -73,21 +76,50 @@ func GetCitiesByState(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	cdCountry := params["cd_country"]
 	cdState := params["cd_state"]
-	var country Country
+	var state State
 
 	s := GetMongoSession()
 	defer s.Close()
 
 	c := s.DB("airports").C("cities")
-	err := c.Find(bson.M{"cd_country": cdCountry,
-		"$and": []bson.M{
-			bson.M{"states": cdState}}}).Select(bson.M{"states": 1}).One(&country)
+	query := bson.M{"$and": []bson.M{
+		bson.M{"cd_country": cdCountry},
+		bson.M{"cd_state": cdState},
+	}}
+	err := c.Find(query).One(&state)
+	if err != nil {
+		if err != mgo.ErrNotFound {
+			panic(err)
+		}
+		fmt.Println(err)
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err = json.NewEncoder(w).Encode(state); err != nil {
+		panic(err)
+	}
+}
+
+// AddAirport insert a airport on the mongo database
+func AddAirport(w http.ResponseWriter, r *http.Request) {
+	var air Airport
+	if err := json.NewDecoder(r.Body).Decode(air); err != nil {
+		panic(err)
+	}
+	i := bson.NewObjectId()
+	air.ID = i
+
+	s := GetMongoSession()
+	defer s.Close()
+
+	c := s.DB("airports").C("airposts_list")
+	err := c.Insert(air)
 	if err != nil {
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err = json.NewEncoder(w).Encode(country.States); err != nil {
+	if err = json.NewEncoder(w).Encode(air); err != nil {
 		panic(err)
 	}
 }

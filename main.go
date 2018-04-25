@@ -17,6 +17,7 @@ func main() {
 	router.HandleFunc("/register/countries/states/{cd_country}/{cd_state}", GetCitiesByState).Methods("GET")
 
 	router.HandleFunc("/airport/name/{sg_airport}", GetAirportByInitials).Methods("GET")
+	router.HandleFunc("/airport", AddAirport).Methods("POST")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
